@@ -37,8 +37,13 @@ apt-get update -qy > /dev/null
 apt-get -o Dpkg::Options::="--force-confold" install -qy nginx php5-fpm php5-gd php5-curl php5-xdebug php5-mysql php5-cli php5-dev php-pear mysql-server-5.5 build-essential > /dev/null
 apt-get -o Dpkg::Options::="--force-confold" install -qy phpmyadmin > /dev/null
 
-echo "Configuring system"
+echo "Installing webgrind"
+wget -nv https://github.com/jokkedk/webgrind/archive/master.tar.gz -O/opt/webgrind.tar.gz
+( cd /opt ; tar -zxf /opt/webgrind.tar.gz )
+mv /opt/webgrind-master /opt/webgrind
+rm /opt/webgrind.tar.gz
 
+echo "Configuring system"
 rsync -a --delete /vagrant/provision/nginx/ /etc/nginx/
 chown -R root:root /etc/nginx/
 
@@ -61,11 +66,11 @@ ping.path = /gitium/fpm-ping
 env[ENV] = dev
 
 access.log = /vagrant/log/php-access.log
-access.format = "%R - %u %t \"%m %r%Q%q\" %s %f %{mili}d %{kilo}M %C%%"
+access.format = "%R - %u %t \"%m %r%Q%q\" %s %f %{mili}dms %{mega}MMb %C%%"
 EOF
 cp -f /vagrant/provision/php.ini /etc/php5/fpm/php.ini
 
-echo "Creating 'gitium' database"
-echo 'create database if not exists `gitium`' | mysql
-echo 'create database if not exists `gitium_test`' | mysql
+echo "Creating 'wordpress' databases"
+echo 'create database if not exists `wordpress`' | mysql
+echo 'create database if not exists `wordpress_test`' | mysql
 
